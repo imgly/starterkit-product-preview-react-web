@@ -85,21 +85,24 @@ export function MockupModal({
       // Set editor title
       cesdk.i18n.setTranslations({ en: { 'editor.title': title } });
 
-      // Add back button
+      // Add back button & actions
       cesdk.ui.insertOrderComponent(
         { in: 'ly.img.navigation.bar', position: 'start' },
         { id: 'ly.img.back.navigationBar', onClick: handleBack }
       );
 
-      // Add save button
-      cesdk.ui.insertOrderComponent(
-        { in: 'ly.img.navigation.bar', position: 'end' },
+      cesdk.ui.updateOrderComponent(
         {
-          id: 'ly.img.exportScene.navigationBar',
-          label: 'Save',
-          variant: 'regular',
-          color: 'accent',
-          onClick: handleSave
+          in: 'ly.img.navigation.bar',
+          match: 'ly.img.actions.navigationBar'
+        },
+        {
+          children: [
+            {
+              id: 'ly.img.saveScene.navigationBar',
+              onClick: handleSave
+            }
+          ]
         }
       );
 
