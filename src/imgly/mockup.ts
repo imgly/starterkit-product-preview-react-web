@@ -20,7 +20,7 @@
 
 import CreativeEngine from '@cesdk/engine';
 
-import { DEFAULT_EXPORT_MIME_TYPE, WHITE_1PX_DATA_URI } from '../constants';
+import { DEFAULT_EXPORT_MIME_TYPE, WHITE_1PX_DATA_URI } from './constants';
 import type {
   HeadlessEngineConfig,
   Placeholders,

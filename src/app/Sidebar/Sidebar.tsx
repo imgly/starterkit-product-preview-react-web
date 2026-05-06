@@ -7,7 +7,7 @@
 import { useCallback, useState } from 'react';
 import { MockupPreview } from '../MockupPreview/MockupPreview';
 import { MockupModal } from '../MockupModal/MockupModal';
-import { PRODUCTS } from '../../constants';
+import { PRODUCTS } from '../../imgly/constants';
 import { getMockupSceneUrl } from '../utils';
 
 interface SidebarProps {
