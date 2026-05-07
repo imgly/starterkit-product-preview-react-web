@@ -5,7 +5,7 @@
  */
 
 import { ProductSelector } from '../ProductSelector/ProductSelector';
-import { PRODUCTS } from '../../constants';
+import { PRODUCTS } from '../../imgly/constants';
 
 interface TopbarProps {
   currentProductKey: string;
