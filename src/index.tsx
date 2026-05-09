@@ -2,8 +2,6 @@
  * CE.SDK Mockup Editor Starterkit - React Entry Point
  *
  * A mockup editor that renders designs on product mockups in real-time.
- *
- * @see https://img.ly/docs/cesdk/js/getting-started/
  */
 
 import type { Configuration } from '@cesdk/cesdk-js';
@@ -15,14 +13,10 @@ import App from './app/App';
 // ============================================================================
 
 const config: Configuration = {
-  // Unique user identifier for analytics (customize for your app)
-  userId: 'starterkit-product-preview-user'
+  userId: 'starterkit-product-preview-user',
 
-  // Local assets (uncomment and set path for self-hosted assets)
-  // baseURL: `/assets/`,
+  // Local assets for development
 
-  // License key (required for production)
-  // license: 'YOUR_LICENSE_KEY',
 };
 
 // ============================================================================
