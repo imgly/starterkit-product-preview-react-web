@@ -4,7 +4,7 @@
  * Helper functions for working with products and scene URLs.
  */
 
-import { PRODUCTS } from '../imgly/constants';
+import { PRODUCTS } from '../constants';
 import { resolveAssetPath } from './resolveAssetPath';
 
 /**

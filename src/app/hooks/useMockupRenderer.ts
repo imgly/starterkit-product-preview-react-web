@@ -19,7 +19,7 @@ import {
   DEFAULT_EXPORT_WIDTH,
   DEFAULT_MAX_PLACEHOLDERS,
   DEFAULT_RENDER_DEBOUNCE_MS
-} from '../../imgly/constants';
+} from '../../constants';
 import { getMockupSceneUrl, getPlaceholderName } from '../utils';
 
 interface UseMockupRendererOptions {
