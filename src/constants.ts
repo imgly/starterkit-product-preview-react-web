@@ -4,7 +4,7 @@
  * All constants for the mockup editor including render defaults and product definitions.
  */
 
-import type { Product } from '../app/ProductSelector/ProductSelector';
+import type { Product } from './app/ProductSelector/ProductSelector';
 
 // ============================================================================
 // Render Defaults
