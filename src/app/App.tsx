@@ -17,6 +17,7 @@ import { Topbar } from './Topbar/Topbar';
 import { Sidebar } from './Sidebar/Sidebar';
 import styles from './App.module.css';
 
+
 interface AppProps {
   config: Configuration;
 }

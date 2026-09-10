@@ -12,6 +12,7 @@ import type CreativeEditorSDK from '@cesdk/cesdk-js';
 import { initProductPreviewSceneEditor } from '../../imgly';
 import styles from './MockupModal.module.css';
 
+
 // ============================================================================
 // Types
 // ============================================================================
