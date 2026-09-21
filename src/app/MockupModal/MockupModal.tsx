@@ -12,6 +12,7 @@ import type CreativeEditorSDK from '@cesdk/cesdk-js';
 import { initProductPreviewSceneEditor } from '../../imgly';
 import styles from './MockupModal.module.css';
 
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -108,9 +109,9 @@ export function MockupModal({
 
       // Load scene
       if (sceneString) {
-        await cesdk.loadFromString(sceneString);
+        await cesdk.load(sceneString);
       } else {
-        await cesdk.loadFromURL(sceneUrl);
+        await cesdk.load(sceneUrl);
       }
 
       // Zoom to fit the page

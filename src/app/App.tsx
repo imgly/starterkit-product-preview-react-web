@@ -17,19 +17,22 @@ import { Topbar } from './Topbar/Topbar';
 import { Sidebar } from './Sidebar/Sidebar';
 import styles from './App.module.css';
 
+
 interface AppProps {
   config: Configuration;
 }
 
 export default function App({ config }: AppProps) {
   const designEngineRef = useRef<CreativeEditorSDK | null>(null);
-  const designSceneStringRef = useRef<string | null>(null);
   const INITIAL_PRODUCT_KEY = 'postcard';
 
   const [currentProductKey, setCurrentProductKey] =
     useState(INITIAL_PRODUCT_KEY);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isProductSwitching, setIsProductSwitching] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  const sceneLoadRef = useRef(0);
 
   // Mockup rendering - engine is lazily initialized inside renderMockup
   const {
@@ -60,24 +63,26 @@ export default function App({ config }: AppProps) {
       const designEngine = designEngineRef.current;
       if (!designEngine || productKey === currentProductKey) return;
 
+      const sceneLoad = ++sceneLoadRef.current;
       setIsProductSwitching(true);
       setCurrentProductKey(productKey);
       resetMockupScene();
-      designSceneStringRef.current = null;
 
       try {
         const sceneUrl = getDesignSceneUrl(productKey);
-        await designEngine.engine.scene.loadFromURL(sceneUrl);
+        await designEngine.engine.scene.load(sceneUrl);
+        if (sceneLoad !== sceneLoadRef.current) return;
 
         // Zoom to fit the first page
         await designEngine.actions.run('zoom.toPage', {
           page: 'first',
           autoFit: true
         });
+        if (sceneLoad !== sceneLoadRef.current) return;
 
         await renderMockupForProduct(productKey, undefined);
       } finally {
-        setIsProductSwitching(false);
+        if (sceneLoad === sceneLoadRef.current) setIsProductSwitching(false);
       }
     },
     [currentProductKey, renderMockupForProduct, resetMockupScene]
@@ -110,23 +115,19 @@ export default function App({ config }: AppProps) {
   const handleEditorInit = useCallback(async (cesdk: CreativeEditorSDK) => {
     designEngineRef.current = cesdk;
 
+    const sceneLoad = ++sceneLoadRef.current;
     await initProductPreviewDesignEditor(cesdk);
 
-    const savedDesignScene = designSceneStringRef.current;
-    if (savedDesignScene) {
-      try {
-        await cesdk.engine.scene.loadFromString(savedDesignScene);
-      } catch {
-        await cesdk.loadFromURL(getDesignSceneUrl(INITIAL_PRODUCT_KEY));
-      }
-    } else {
-      await cesdk.loadFromURL(getDesignSceneUrl(INITIAL_PRODUCT_KEY));
-    }
+    await cesdk.load(getDesignSceneUrl(INITIAL_PRODUCT_KEY));
+
+    setEngineReadyRef.current();
+    setIsInitializing(false);
+
+    if (sceneLoad !== sceneLoadRef.current) return;
 
     // Zoom to fit the first page
     await cesdk.actions.run('zoom.toPage', { page: 'first', autoFit: true });
-
-    setEngineReadyRef.current();
+    if (sceneLoad !== sceneLoadRef.current) return;
 
     await renderMockupForProductRef.current(
       INITIAL_PRODUCT_KEY,
@@ -148,19 +149,7 @@ export default function App({ config }: AppProps) {
   // Fullscreen Handler
   // ============================================================================
 
-  const handleFullscreenChange = useCallback(async (fullscreen: boolean) => {
-    if (fullscreen) {
-      const cesdk = designEngineRef.current;
-      if (cesdk) {
-        try {
-          designSceneStringRef.current =
-            await cesdk.engine.scene.saveToString();
-        } catch {
-          designSceneStringRef.current = null;
-        }
-      }
-      designEngineRef.current = null;
-    }
+  const handleFullscreenChange = useCallback((fullscreen: boolean) => {
     setIsFullscreen(fullscreen);
   }, []);
 
@@ -173,12 +162,10 @@ export default function App({ config }: AppProps) {
       <Topbar
         currentProductKey={currentProductKey}
         onProductChange={handleProductChange}
-        disabled={isProductSwitching}
+        disabled={isProductSwitching || isInitializing}
       />
 
-      <div
-        className={`${styles.mainLayout} ${isFullscreen ? styles.fullscreenLayout : ''}`}
-      >
+      <div className={styles.mainLayout}>
         <Sidebar
           currentProductKey={currentProductKey}
           mockupImageUrl={mockupImageUrl}
@@ -192,15 +179,15 @@ export default function App({ config }: AppProps) {
           onDownload={handleDownload}
         />
 
-        {!isFullscreen && (
-          <div className={styles.editorWrapper}>
-            <CreativeEditor
-              className={styles.editor}
-              config={config}
-              init={handleEditorInit}
-            />
-          </div>
-        )}
+        <div
+          className={`${styles.editorWrapper} ${isFullscreen ? styles.hidden : ''}`}
+        >
+          <CreativeEditor
+            className={styles.editor}
+            config={config}
+            init={handleEditorInit}
+          />
+        </div>
       </div>
     </div>
   );
